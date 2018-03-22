@@ -1,22 +1,22 @@
-package com.zondy;
+package com.zondy.Tree;
 
 import org.junit.Test;
 
 public class BinaryTree<T extends Comparable<T>> {
-    public TreeNode<T> root = null;
+    public BinaryTreeNode<T> root = null;
 
     /**
      * @param key 　要查找的关键字
      * @Description: 查找二叉树节点
-     * @return: TreeNode 找到返回对应节点，未找到返回null
+     * @return: BinaryTreeNode 找到返回对应节点，未找到返回null
      * @Author: ygqqq
      * @Date: 18-2-26
      */
-    public TreeNode<T> Search(T key) {
+    public BinaryTreeNode<T> Search(T key) {
         //空树的情况
         if (this.root == null)
             return null;
-        TreeNode<T> current = this.root;
+        BinaryTreeNode<T> current = this.root;
         while (current.data.compareTo(key) != 0) {
             if (key.compareTo(current.data) > 0)
                 current = current.right;
@@ -31,18 +31,18 @@ public class BinaryTree<T extends Comparable<T>> {
 
     /**
      * @param key
-     * @Description: 向二叉树插入数据
+     * @Description: 向二叉树插入数据，非递归方式
      * @return: boolean
      * @Author: ygqqq
      * @Date: 18-2-26
      */
     public boolean Insert(T key) {
         if (this.root == null) {
-            this.root = new TreeNode<T>(key);
+            this.root = new BinaryTreeNode<T>(key);
             return true;
         }
-        TreeNode<T> current = this.root;    //指向当前遍历到的节点
-        TreeNode<T> parent = this.root;     //指向当前遍历到的节点的父节点，也就是挂载点
+        BinaryTreeNode<T> current = this.root;    //指向当前遍历到的节点
+        BinaryTreeNode<T> parent = this.root;     //指向当前遍历到的节点的父节点，也就是挂载点
         boolean isInsertLeft = true;        //标识挂载到左节点还是右节点
         while (current != null) {
             if (key.compareTo(current.data) > 0) {// key > 当前节点
@@ -60,10 +60,27 @@ public class BinaryTree<T extends Comparable<T>> {
         }
         //能运行到这里说明找到了挂载点，parent中记录的就是挂载点
         if (isInsertLeft)
-            parent.left = new TreeNode<T>(key);
+            parent.left = new BinaryTreeNode<T>(key);
         else
-            parent.right = new TreeNode<T>(key);
+            parent.right = new BinaryTreeNode<T>(key);
         return true;
+    }
+
+    /*
+        使用递归的方式插入二叉树
+     */
+    public BinaryTreeNode<T> Insert(BinaryTreeNode<T> tree, T key) {
+        if (tree == null) {
+            return new BinaryTreeNode<T>(key);
+        }
+        if (key.compareTo(tree.data) < 0)
+            tree.left = Insert(tree.left, key);
+        else if (key.compareTo(tree.data) > 0)
+            tree.right = Insert(tree.right, key);
+        else
+            System.out.println("插入了重复节点");
+
+        return tree;
     }
 
     /*
@@ -73,8 +90,8 @@ public class BinaryTree<T extends Comparable<T>> {
         //相删除节点的话，依然需要先找到节点，并且要记录下来其父节点等节点，用于节点之间关系的变换
         if (this.root == null) return false;
 
-        TreeNode<T> current = this.root;    //指向当前遍历到的节点
-        TreeNode<T> parent = this.root;     //指向当前遍历到的节点的父节点，也是待删除节点的父亲
+        BinaryTreeNode<T> current = this.root;    //指向当前遍历到的节点
+        BinaryTreeNode<T> parent = this.root;     //指向当前遍历到的节点的父节点，也是待删除节点的父亲
         boolean isDelLeft = true;           //标识要删除的节点是左节点还是右节点
         while (current.data.compareTo(key) != 0) {
             parent = current;
@@ -107,7 +124,7 @@ public class BinaryTree<T extends Comparable<T>> {
             else if (isDelLeft) parent.left = current.left;
             else parent.right = current.left;
         } else {//要删除的节点有左右2个子节点,此时需要找到待删除节点的直接后继，并处理相关节点之间的变换关系
-            TreeNode<T> subNode = GetSubsequenceNode(current);
+            BinaryTreeNode<T> subNode = GetSubsequenceNode(current);
             if (current == this.root) this.root = subNode;
             else if (isDelLeft) parent.left = subNode;
             else parent.right = subNode;
@@ -116,10 +133,10 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     //找到待删除节点的直接后继，并处理相关节点之间的变换关系
-    public TreeNode<T> GetSubsequenceNode(TreeNode<T> delNode) {
-        TreeNode<T> subNode = delNode;  //待返回的直接后继节点
-        TreeNode<T> subNodeParent = delNode;//待返回的直接后继节点的父节点
-        TreeNode<T> current = delNode.right; //当前遍历的节点，从待删除节点的右节点开始遍历
+    public BinaryTreeNode<T> GetSubsequenceNode(BinaryTreeNode<T> delNode) {
+        BinaryTreeNode<T> subNode = delNode;  //待返回的直接后继节点
+        BinaryTreeNode<T> subNodeParent = delNode;//待返回的直接后继节点的父节点
+        BinaryTreeNode<T> current = delNode.right; //当前遍历的节点，从待删除节点的右节点开始遍历
         //先不管节点之间的关系，先找到后继节点以及其父亲节点
         while (current != null) {
             subNodeParent = subNode;
@@ -140,7 +157,7 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     // 中序遍历
-    public void MiddleOrderPrintTree(TreeNode<Integer> tree) {
+    public void MiddleOrderPrintTree(BinaryTreeNode<Integer> tree) {
         if (tree == null) {
             return;
         }
@@ -151,13 +168,15 @@ public class BinaryTree<T extends Comparable<T>> {
 
     @Test
     public void test() {
-        int[] arr = {30,5, 7, 9, 15, 4, 13, 78, 22, 54, 31};
+        int[] arr = {30, 5, 7, 9, 15, 4, 5, 13, 78, 22, 54, 31};
         BinaryTree<Integer> demo = new BinaryTree<Integer>();
         for (int x : arr) {
-            demo.Insert(x);
+            //demo.Insert(x);
+            demo.root = demo.Insert(demo.root, x);
+            //demo.insert(x);
         }
         demo.MiddleOrderPrintTree(demo.root);
-//        TreeNode<Integer> node = demo.Search(16);
+//        BinaryTreeNode<Integer> node = demo.Search(16);
 //        if (node == null)
 //            System.out.println("没找到");
 //        else
