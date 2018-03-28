@@ -1,5 +1,9 @@
 package com.zondy.OrdArray;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Random;
+
 public class OrdArray {
     private int[] array;
     private int len = 0;
@@ -77,15 +81,56 @@ public class OrdArray {
         System.out.println("");
     }
 
+    public void BubbleSort(int[] array) {
+        int pos = 0, tmpPos = 0;
+        for (int i = 0; i < array.length; i++) {
+            pos = tmpPos;
+            for (int j = array.length - 1; j > pos; j--) {
+                if (array[j] < array[j - 1]) {
+                    int temp = array[j - 1];
+                    array[j - 1] = array[j];
+                    array[j] = temp;
+                    tmpPos = j;
+                }
+            }
+            if (pos == tmpPos) break;
+        }
+    }
+    public void B(int[] array){
+        for (int i = 0; i < array.length; i++) {
+            for (int j = array.length - 1; j > i; j--) {
+                if (array[j] < array[j - 1]) {
+                    int temp = array[j - 1];
+                    array[j - 1] = array[j];
+                    array[j] = temp;
+                }
+            }
+        }
+    }
     public static void main(String args[]) {
-        OrdArray demo = new OrdArray(new int[]{1, 3, 5, 8, 10, 13, 18, 20, 25}, 100);
-        demo.Insert(11);
-        demo.Insert(12);
-        demo.Insert(19);
-        demo.Print();
-        demo.Delete(18);
-        demo.Delete(13);
-        demo.Print();
+        OrdArray demo = new OrdArray(new int[]{1, 3, 5, 8, 10, 13, 18, 20, 25}, 50000*2);
+//        demo.Insert(11);
+//        demo.Insert(12);
+//        demo.Insert(19);
+//        demo.Print();
+//        demo.Delete(18);
+//        demo.Delete(13);
+//        demo.Print();
 
+        //int[] a = new int[50000];
+        for (int i=0;i<50000*2-50;i++){
+            demo.Insert(new Random().nextInt(50000*2));
+        }
+        //int[] b = Arrays.copyOf(a,a.length);
+        long l1 = System.currentTimeMillis();
+        demo.B(demo.array);
+        long l2 = System.currentTimeMillis();
+        System.out.println("优化前时间:"+(l2-l1));
+        demo.BubbleSort(demo.array);
+        long l3 = System.currentTimeMillis();
+        System.out.println("优化后时间:"+(l3-l2));
+//        for (int b : a) {
+//            System.out.print(b + "\t");
+//        }
     }
 }
